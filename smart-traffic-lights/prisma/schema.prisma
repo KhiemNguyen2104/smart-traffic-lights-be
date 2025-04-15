@@ -1,0 +1,141 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+enum TLType {
+    A
+    B
+}
+
+model User {
+    user_id   String @id
+    user_name String
+    hash_key  String
+    role      String
+
+    changes        Changes[]
+    has            Has[]
+    fines          Fines[]
+    turns_off_auto Turns_off_auto[]
+}
+
+model Permission {
+    per_id   String @id
+    per_name String
+
+    has Has[]
+}
+
+model Traffic_light {
+    tl_id    String @id
+    length   Float
+    width    Float
+    g_time   Int
+    r_time   Int
+    y_time   Int
+    type     TLType
+    feed_key String
+    g_thres  Int
+    r_thres  Int
+    y_thres  Int
+
+    crossroads Crossroads @relation(fields: [feed_key], references: [feed_key])
+    fines      Fines[]
+    updates    Updates[]
+}
+
+model System {
+    sys_id       String @id
+    im_send_time Int
+}
+
+model Crossroads {
+    feed_key String @id
+    address  String
+
+    roads Road[]
+
+    traffic_lights Traffic_light[]
+    updates        Updates[]
+    turns_off_auto Turns_off_auto[]
+}
+
+model Road {
+    feed_key String
+    type     TLType
+
+    crossroads Crossroads @relation(fields: [feed_key], references: [feed_key])
+
+    @@id([feed_key, type])
+}
+
+model Has {
+    per_id  String
+    user_id String
+
+    user       User       @relation(fields: [user_id], references: [user_id])
+    permission Permission @relation(fields: [per_id], references: [per_id])
+
+    @@id([per_id, user_id])
+}
+
+model Changes {
+    user_id String
+    time    DateTime @default(now())
+
+    user User @relation(fields: [user_id], references: [user_id])
+
+    @@id([user_id, time])
+}
+
+/*
+    This table stores records about changes applied by system's models to the crossroads.
+*/
+model Fines {
+    tl_id   String
+    user_id String
+    time    DateTime @default(now())
+    g_time  Int
+    r_time  Int
+    y_time  Int
+    g_thres Int
+    r_thres Int
+    y_thres Int
+
+    traffic_light Traffic_light @relation(fields: [tl_id], references: [tl_id])
+    user          User          @relation(fields: [user_id], references: [user_id])
+
+    @@id([tl_id, user_id, time])
+}
+
+/*
+    This table stores records about changes applied by system's models to the crossroads.
+*/
+model Updates {
+    feed_key String
+    time     DateTime @default(now())
+    tl_id    String
+    g_time   Int
+    r_time   Int
+
+    crossroads    Crossroads    @relation(fields: [feed_key], references: [feed_key])
+    traffic_light Traffic_light @relation(fields: [tl_id], references: [tl_id])
+
+    @@id([feed_key, time, tl_id])
+}
+
+model Turns_off_auto {
+    user_id  String
+    feed_key String
+    time     DateTime @default(now())
+
+    user       User       @relation(fields: [user_id], references: [user_id])
+    crossroads Crossroads @relation(fields: [feed_key], references: [feed_key])
+
+    @@id([user_id, feed_key, time])
+}
