@@ -4,6 +4,7 @@ import { AdafruitController } from './adafruit.controller';
 
 @Module({
   providers: [AdafruitService],
-  controllers: [AdafruitController]
+  controllers: [AdafruitController],
+  exports: [AdafruitService],
 })
 export class AdafruitModule {}

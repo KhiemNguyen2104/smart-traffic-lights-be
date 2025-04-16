@@ -1,14 +1,24 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { AdafruitService } from './adafruit.service';
-import { AdafruitModule } from './adafruit.module';
+import { ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
+import { PublicDto } from './dto';
 
+@ApiTags('Adafruit')
 @Controller('mqtt')
 export class AdafruitController {
-  constructor(private readonly adafruitService: AdafruitService) {}
+  constructor(private readonly adafruitService: AdafruitService) { }
 
   @Post('publish')
-  publish(@Body() body: { value: string }) {
-    this.adafruitService.publishData(body.value);
-    return { message: 'Data published', value: body.value };
+  @ApiBody({ type: PublicDto })
+  publish(@Body() body: PublicDto) {
+    this.adafruitService.publishData(body);
+    return { message: 'Data published', value: body };
+  }
+
+  @Post('new/:id')
+  @ApiParam({ name: 'id', required: true, description: "Feed name", type: String })
+  createNewFeed(@Param('id') id: string) {
+    this.adafruitService.createNewFeed(id)
+    return { message: 'New feed created', value: id }
   }
 }
