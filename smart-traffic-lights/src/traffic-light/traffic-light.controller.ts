@@ -9,7 +9,7 @@ import { AddTLDto, UpdateTLDto } from './dto/traffic-light.dto';
 @ApiTags('traffic-lights')
 @Controller('traffic-light')
 export class TrafficLightController {
-    constructor(private TLService: TrafficLightService) {}
+    constructor(private TLService: TrafficLightService) { }
 
     // @Post('add')
     // async add(dto: AddTLDto) {
