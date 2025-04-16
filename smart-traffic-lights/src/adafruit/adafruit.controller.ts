@@ -1,10 +1,10 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { AdafruitService } from './adafruit.service';
 import { ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
 import { PublicDto } from './dto';
 
 @ApiTags('Adafruit')
-@Controller('mqtt')
+@Controller('mqtts')
 export class AdafruitController {
   constructor(private readonly adafruitService: AdafruitService) { }
 
@@ -15,10 +15,17 @@ export class AdafruitController {
     return { message: 'Data published', value: body };
   }
 
-  @Post('new/:id')
+  @Post(':id')
   @ApiParam({ name: 'id', required: true, description: "Feed name", type: String })
   createNewFeed(@Param('id') id: string) {
-    this.adafruitService.createNewFeed(id)
+    const res = this.adafruitService.createNewFeed(id)
     return { message: 'New feed created', value: id }
+  }
+
+  @Delete(':id')
+  @ApiParam({ name: 'id', required: true, description: "Feed name", type: String })
+  deleteFeed(@Param('id') id: string) {
+    const res = this.adafruitService.deleteFeed(id)
+    return { message: "Feed deleted", value: id }
   }
 }

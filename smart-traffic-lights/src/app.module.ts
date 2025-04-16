@@ -6,10 +6,11 @@ import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { TrafficLightModule } from './traffic-light/traffic-light.module';
 import { PrismaService } from './prisma/prisma.service';
+import { CrossroadsModule } from './crossroads/crossroads.module';
 import { TimecalModule } from './timecal/timecal.module';
 
 @Module({
-  imports: [AdafruitModule, AuthModule, PrismaModule, TrafficLightModule, TimecalModule],
+  imports: [AdafruitModule, AuthModule, PrismaModule, TrafficLightModule, CrossroadsModule, TimecalModule],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })

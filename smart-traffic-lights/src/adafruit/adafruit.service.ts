@@ -113,4 +113,19 @@ export class AdafruitService implements OnModuleInit {
       throw new ForbiddenException(`${ERRORS.CREATE_NEW_FEED_ERROR}: ${err?.response?.data?.error || err.message}`);
     }
   }
+
+  async deleteFeed(id: string) {
+    const url = `https://io.adafruit.com/api/v2/${this.ADAFRUIT_USERNAME}/feeds/${id}`
+
+    const headers = {
+      'X-AIO-Key': this.ADAFRUIT_KEY
+    }
+
+    try {
+      const response = await axios.delete(url, { headers });
+      return response.data;
+    } catch (err) {
+      throw new ForbiddenException(ERRORS.DELETE_FEED_ERROR + `: ${err}`)
+    }
+  }
 }
