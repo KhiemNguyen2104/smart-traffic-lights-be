@@ -16,10 +16,11 @@ export class TrafficLightController {
     //     return await this.TLService.add(dto);
     // }
 
-    // @Get(':id')
-    // async find(@Param('id') id: string | undefined) {
-    //     return this.TLService.find(id);
-    // }
+    @Get(':id')
+    async find(@Param('id') id: string | undefined) {
+        return "OK"
+        // return this.TLService.find(id);
+    }
 
     // @Put(':id')
     // async update(@Param('id') id: string, dto: UpdateTLDto) {

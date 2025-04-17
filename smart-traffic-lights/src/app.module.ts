@@ -6,11 +6,11 @@ import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { TrafficLightModule } from './traffic-light/traffic-light.module';
 import { PrismaService } from './prisma/prisma.service';
-import { TimecalModule } from './timecal/timecal.module';
+import { TimecalService } from './timecal/timecal.service';
 
 @Module({
-  imports: [AdafruitModule, AuthModule, PrismaModule, TrafficLightModule, TimecalModule],
+  imports: [AdafruitModule, AuthModule, PrismaModule, TrafficLightModule],
   controllers: [AppController],
-  providers: [AppService, PrismaService],
+  providers: [AppService, PrismaService, TimecalService],
 })
-export class AppModule {}
+export class AppModule { }
