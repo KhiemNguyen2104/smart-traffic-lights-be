@@ -156,3 +156,5 @@ model Turns_off_auto {
 
     @@id([user_id, cr_id, time])
 }
+
+
