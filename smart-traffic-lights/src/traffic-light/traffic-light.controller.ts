@@ -37,6 +37,6 @@ export class TrafficLightController {
     @ApiBody({ type: UpdateTLDto })
     @Put(':id')
     async update(@Param('id') id: string, dto: UpdateTLDto) {
-        return await this.TLService.update(id, dto);
+        return await this.TLService.update(dto);
     }
 }
