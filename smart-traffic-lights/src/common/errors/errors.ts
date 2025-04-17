@@ -6,6 +6,10 @@ export const ERRORS = {
     ADDING_ERROR: "There were something wrong when adding",
     FEED_KEY_NOT_FOUND: "A Feed key is required",
     PUBLIC_ERROR: "There were something wrong when publishing",
-    CREATE_NEW_FEED_ERROR: "Can not create a new Feed",
-    DELETE_FEED_ERROR: "Can not delete the feed"
+    CREATE_NEW_FEED_ERROR: "Cannot create new Feed",
+    DELETE_FEED_ERROR: "Cannot delete the feed",
+    CREATE_NEW_GROUP_ERROR: "Cannot create new Group",
+    DELETE_GROUP_ERROR: "Cannot delete the Group",
+    UPDATE_ACTOR_NOT_FOUND: "An user id or crossroads id is required",
+    UPDATE_ERROR: "Cannot update",
 }

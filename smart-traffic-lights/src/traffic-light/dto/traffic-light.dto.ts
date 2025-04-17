@@ -1,13 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { TLType } from '@prisma/client'
-import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString} from 'class-validator'
+import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator'
 
 export class AddTLDto {
-    @IsString()
-    @ApiProperty()
-    @IsNotEmpty()
-    tl_id: string
-    
+    // @IsString()
+    // @ApiProperty()
+    // @IsNotEmpty()
+    // tl_id: string
+
     @IsString()
     @ApiProperty()
     @IsNotEmpty()
@@ -32,7 +32,7 @@ export class AddTLDto {
     @ApiProperty()
     @IsNotEmpty()
     r_time: number
-    
+
     @IsNumber()
     @ApiProperty()
     @IsNotEmpty()
@@ -47,26 +47,26 @@ export class AddTLDto {
     @ApiProperty()
     @IsNotEmpty()
     r_thres: number
-    
+
     @IsNumber()
     @ApiProperty()
     @IsNotEmpty()
     y_thres: number
 
-    @IsString()
-    @ApiProperty()
-    @IsNotEmpty()
-    green_feed: string
+    // @IsString()
+    // @ApiProperty()
+    // @IsNotEmpty()
+    // green_feed: string
 
-    @IsString()
-    @ApiProperty()
-    @IsNotEmpty()
-    red_feed: string
+    // @IsString()
+    // @ApiProperty()
+    // @IsNotEmpty()
+    // red_feed: string
 
-    @IsString()
-    @ApiProperty()
-    @IsNotEmpty()
-    yellow_feed: string
+    // @IsString()
+    // @ApiProperty()
+    // @IsNotEmpty()
+    // yellow_feed: string
 
     @IsEnum(TLType)
     @ApiProperty()
@@ -84,7 +84,7 @@ export class UpdateTLDto {
     @ApiProperty()
     @IsString()
     user_id?: string
-    
+
     @IsOptional()
     @ApiProperty()
     @IsString()
@@ -99,7 +99,7 @@ export class UpdateTLDto {
     @IsNumber()
     @IsNotEmpty()
     r_time: number
-    
+
     @ApiProperty()
     @IsNumber()
     @IsOptional()
@@ -114,7 +114,7 @@ export class UpdateTLDto {
     @IsNumber()
     @IsOptional()
     r_thres?: number
-    
+
     @ApiProperty()
     @IsNumber()
     @IsOptional()

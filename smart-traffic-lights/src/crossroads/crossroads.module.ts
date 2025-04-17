@@ -6,4 +6,6 @@ import { CrossroadsController } from './crossroads.controller';
   providers: [CrossroadsService],
   controllers: [CrossroadsController]
 })
-export class CrossroadsModule {}
+export class CrossroadsModule {
+    
+}

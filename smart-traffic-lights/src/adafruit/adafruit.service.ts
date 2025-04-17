@@ -1,9 +1,10 @@
 import { ForbiddenException, Injectable, OnModuleInit } from '@nestjs/common';
 import * as mqtt from 'mqtt';
 import * as dotenv from 'dotenv';
-import { PublicDto } from './dto';
+import { NewFeedDto, PublicDto } from './dto';
 import { ERRORS } from 'src/common/errors';
 import axios from 'axios';
+import * as qs from 'qs';
 
 dotenv.config();
 
@@ -85,8 +86,15 @@ export class AdafruitService implements OnModuleInit {
     return;
   }
 
-  async createNewFeed(id: string) {
-    const url = `https://io.adafruit.com/api/v2/${this.ADAFRUIT_USERNAME}/feeds`
+  async createNewFeed(dto: NewFeedDto) {
+    const group = dto.group
+    const id = dto.id
+
+    console.log("Data: ", dto)
+
+    const url = group ? `https://io.adafruit.com/api/v2/${this.ADAFRUIT_USERNAME}/groups/${group}/feeds` : `https://io.adafruit.com/api/v2/${this.ADAFRUIT_USERNAME}/feeds`
+
+    console.log(`URL: ${url}`);
 
     const body = {
       feed: {
@@ -114,18 +122,67 @@ export class AdafruitService implements OnModuleInit {
     }
   }
 
-  async deleteFeed(id: string) {
-    const url = `https://io.adafruit.com/api/v2/${this.ADAFRUIT_USERNAME}/feeds/${id}`
+  async deleteFeed(dto: NewFeedDto) {
+    const group = dto.group
+    const id = dto.id
 
+    const feed_key = group ? `${group}.${id}` : id
+
+    console.log("Data: ", dto);
+
+    const url = `https://io.adafruit.com/api/v2/${this.ADAFRUIT_USERNAME}/feeds/${feed_key}`
+
+    console.log(`URL: ${url}`);
+
+    // const form = qs.stringify({ feed_key: `${group}.${id}` })
+
+    const headers = group ?
+      {
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+        'X-AIO-Key': this.ADAFRUIT_KEY
+      } :
+      {
+        'X-AIO-Key': this.ADAFRUIT_KEY
+      }
+    // console.log("Form: ", form)
+    try {
+      let response = await axios.delete(url, { headers })
+      // if (group) { response = await axios.post(url, null, { headers, params }); }
+      // else { response = await axios.delete(url, { headers }) }
+      return response;
+    } catch (err) {
+      throw new ForbiddenException(ERRORS.DELETE_FEED_ERROR + `: ${err}`)
+    }
+  }
+
+  async createGroup(id: string) {
+    const url = `https://io.adafruit.com/api/v2/${this.ADAFRUIT_USERNAME}/groups`
+    const params = { name: id }
     const headers = {
       'X-AIO-Key': this.ADAFRUIT_KEY
     }
 
     try {
-      const response = await axios.delete(url, { headers });
-      return response.data;
+      const response = await axios.post(url, null, { headers, params })
+
+      return response
     } catch (err) {
-      throw new ForbiddenException(ERRORS.DELETE_FEED_ERROR + `: ${err}`)
+      throw new ForbiddenException(ERRORS.CREATE_NEW_GROUP_ERROR + `: ${err}`)
+    }
+  }
+
+  async deleteGroup(id: string) {
+    const url = `https://io.adafruit.com/api/v2/${this.ADAFRUIT_USERNAME}/groups/${id}`
+    const headers = {
+      'X-AIO-Key': this.ADAFRUIT_KEY
+    }
+
+    try {
+      const response = await axios.delete(url, { headers })
+
+      return response
+    } catch (err) {
+      throw new ForbiddenException(ERRORS.DELETE_GROUP_ERROR + `: ${err}`)
     }
   }
 }

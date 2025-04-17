@@ -36,3 +36,19 @@ export class PublicDto {
     @IsOptional()
     y_time: string
 }
+
+export class NewFeedDto {
+    @IsString()
+    @IsOptional()
+    @ApiProperty()
+    group?: string
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty()
+    id: string
+
+    constructor(partial?: Partial<NewFeedDto>) {
+        Object.assign(this, partial);
+    }
+}
