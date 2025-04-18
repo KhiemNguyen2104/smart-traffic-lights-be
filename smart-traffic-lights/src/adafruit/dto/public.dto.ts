@@ -4,37 +4,30 @@ import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class PublicDto {
     @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
-    green_feed: string
-
-    @Transform(({ value }) => value.toString())
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
-    g_time: string
-
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
-    red_feed: string
-
-    @Transform(({ value }) => value.toString())
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
-    r_time: string
-
-    @IsString()
-    @ApiProperty()
     @IsOptional()
-    yellow_feed?: string
+    @ApiProperty()
+    group?: string
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty()
+    state: string
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty()
+    state_feed: string
 
     @Transform(({ value }) => value.toString())
     @IsString()
+    @IsNotEmpty()
     @ApiProperty()
-    @IsOptional()
-    y_time: string
+    time: string
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty()
+    time_feed: string
 }
 
 export class NewFeedDto {

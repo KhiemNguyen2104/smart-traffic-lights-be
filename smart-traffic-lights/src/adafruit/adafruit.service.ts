@@ -5,6 +5,7 @@ import { NewFeedDto, PublicDto } from './dto';
 import { ERRORS } from 'src/common/errors';
 import axios from 'axios';
 import * as qs from 'qs';
+import { group } from 'console';
 
 dotenv.config();
 
@@ -49,39 +50,30 @@ export class AdafruitService implements OnModuleInit {
   // }
 
   public publishData(data: PublicDto) {
-    if (!data.green_feed || !data.red_feed) {
+    if (!data.state_feed || !data.time_feed) {
       throw new ForbiddenException(ERRORS.FEED_KEY_NOT_FOUND)
     }
 
-    data.green_feed = `${this.ADAFRUIT_USERNAME}/feeds/${data.green_feed}`.replaceAll('_', '-')
-    data.red_feed = `${this.ADAFRUIT_USERNAME}/feeds/${data.red_feed}`.replaceAll('_', '-')
-    data.yellow_feed = `${this.ADAFRUIT_USERNAME}/feeds/${data.yellow_feed}`.replaceAll('_', '-')
+    const group = data.group ? `${data.group}.` : ""
 
-    this.client.publish(data.green_feed, data.g_time, { qos: 1 }, (err) => {
+    const state_feed = `${this.ADAFRUIT_USERNAME}/feeds/${group}${data.state_feed}`
+    const time_feed = `${this.ADAFRUIT_USERNAME}/feeds/${group}${data.time_feed}`
+
+    this.client.publish(time_feed, data.time, { qos: 1 }, (err) => {
       if (!err) {
-        console.log(`Published: ${data.g_time} to ${data.green_feed}`);
+        console.log(`Published: ${data.time} to ${data.time_feed}`);
       } else {
         throw new ForbiddenException(ERRORS.PUBLIC_ERROR + ":", err)
       }
     })
 
-    this.client.publish(data.red_feed, data.r_time, { qos: 1 }, (err) => {
+    this.client.publish(state_feed, data.state, { qos: 1 }, (err) => {
       if (!err) {
-        console.log(`Published: ${data.r_time} to ${data.red_feed}`);
+        console.log(`Published: ${data.state} to ${data.state_feed}`);
       } else {
         throw new ForbiddenException(ERRORS.PUBLIC_ERROR + ":", err)
       }
     })
-
-    if (data.yellow_feed) {
-      this.client.publish(data.yellow_feed, data.y_time, { qos: 1 }, (err) => {
-        if (!err) {
-          console.log(`Published: ${data.y_time} to ${data.yellow_feed}`);
-        } else {
-          throw new ForbiddenException(ERRORS.PUBLIC_ERROR + ":", err)
-        }
-      })
-    }
 
     return;
   }
