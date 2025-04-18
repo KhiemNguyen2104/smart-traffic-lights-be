@@ -3,6 +3,7 @@ import { AuthLoginDto, AuthSignUpDto } from './dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import * as argon from 'argon2';
+import { ERRORS } from 'src/common/errors';
 
 @Injectable()
 export class AuthService {
@@ -35,7 +36,24 @@ export class AuthService {
     /** 
         This service just use for create already accounts by developers or DBA, it is invisible with users.
     */
-    async signup(dto: AuthSignUpDto) { } // TODO
+    async signup(dto: AuthSignUpDto) {
+        const hash_key = await argon.hash(dto.password)
+
+        try {
+            const user = await this.prisma.user.create({
+                data: {
+                    user_id: dto.user_id,
+                    user_name: dto.user_name,
+                    hash_key: hash_key,
+                    role: dto.role
+                }
+            })
+
+            return await this.signToken(user.user_id, user.user_name, user.role)
+        } catch (err) {
+            throw new ForbiddenException(ERRORS.REGISTER_ERROR + `: ${err}`)
+        }
+    }
 
     async signToken(user_id: string, user_name: string, user_role: string): Promise<{ access_token: string }> {
         const payload = {

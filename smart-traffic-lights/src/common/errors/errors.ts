@@ -12,4 +12,5 @@ export const ERRORS = {
     DELETE_GROUP_ERROR: "Cannot delete the Group",
     UPDATE_ACTOR_NOT_FOUND: "An user id or crossroads id is required",
     UPDATE_ERROR: "Cannot update",
+    REGISTER_ERROR: "Cannot register for new user",
 }
