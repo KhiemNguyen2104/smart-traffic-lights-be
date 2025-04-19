@@ -4,8 +4,9 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { Server } from 'socket.io';
 import * as http from 'http';
-
-
+import { GlobalService } from './global/global.service';
+import { AdafruitService } from './adafruit/adafruit.service';
+import { PublicDto } from './adafruit/dto';
 
 class TimecalService {
 
@@ -26,6 +27,7 @@ class TimecalService {
       high: high
     }
   }
+
   calTime(stack: Array<number>): number {
     let stack_length = stack.length
     if (stack_length === 0) {
@@ -46,6 +48,7 @@ class TimecalService {
     }
     return Math.floor(sum1 / sum2)
   }
+
   calAnpha(dto: any): number {
     const rg = dto.D1 / (dto.D1 + dto.D2)
     const R = dto.L1 / (dto.L1 + dto.L2)
@@ -55,6 +58,7 @@ class TimecalService {
 
     return 0.5
   }
+
   nextState(state: String, time: number): String {
     if (time <= 1) {
       if (state === "red") {
@@ -205,8 +209,10 @@ class TimecalService {
 
 let timecalService = new TimecalService()
 
-let list_D2 = [0.15, 0.19, 0.18, 0, 0.21, 0.2, 0.21, 0.2, 0.2, 0.24, 0.25, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.2, 0.24, 0.25, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.2, 0.24, 0.25, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.2, 0.24, 0.43, 0, 0.44, 0.37, 0.35, 0.32, 0.34, 0.9, 0.23, 0.6, 0.34, 0.9, 0.23, 0.6, 0.15, 0.19, 0.18, 0, 0.21, 0.2, 0.21, 0.2, 0.2, 0.24, 0.25, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.2, 0.24, 0.25, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.2, 0.24, 0.25, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.2, 0.24, 0.43, 0, 0.44, 0.37, 0.35, 0.32, 0.34, 0.9, 0.23, 0.6, 0.34, 0.9, 0.23, 0.6]
-let list_D1 = [0.53, 0.53, 0.43, 0, 0.44, 0.37, 0.35, 0.32, 0.34, 0.9, 0.23, 0.6, 0.15, 0.08, 0.12, 0.1, 0.13, 0.18, 0.24, 0.24, 0.25, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.2, 0.24, 0.25, 0.24, 0.24, 0.9, 0.24, 0.24, 0.24, 0.24, 0.2, 0.24, 0.43, 0, 0.44, 0.37, 0.35, 0.32, 0.34, 0.9, 0.23, 0.6, 0.34, 0.9, 0.23, 0.6, 0.15, 0.19, 0.18, 0, 0.21, 0.2, 0.21, 0.2, 0.2, 0.24, 0.25, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.2, 0.24, 0.25, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.2, 0.24, 0.25, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.2, 0.24, 0.43, 0, 0.44, 0.37, 0.35, 0.32, 0.34, 0.9, 0.23, 0.6, 0.34, 0.9, 0.23, 0.6]
+// let list_D2 = [0.15, 0.19, 0.18, 0, 0.21, 0.2, 0.21, 0.2, 0.2, 0.24, 0.25, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.2, 0.24, 0.25, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.2, 0.24, 0.25, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.2, 0.24, 0.43, 0, 0.44, 0.37, 0.35, 0.32, 0.34, 0.9, 0.23, 0.6, 0.34, 0.9, 0.23, 0.6, 0.15, 0.19, 0.18, 0, 0.21, 0.2, 0.21, 0.2, 0.2, 0.24, 0.25, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.2, 0.24, 0.25, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.2, 0.24, 0.25, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.2, 0.24, 0.43, 0, 0.44, 0.37, 0.35, 0.32, 0.34, 0.9, 0.23, 0.6, 0.34, 0.9, 0.23, 0.6]
+let list_D2 = [0.15]
+// let list_D1 = [0.53, 0.53, 0.43, 0, 0.44, 0.37, 0.35, 0.32, 0.34, 0.9, 0.23, 0.6, 0.15, 0.08, 0.12, 0.1, 0.13, 0.18, 0.24, 0.24, 0.25, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.2, 0.24, 0.25, 0.24, 0.24, 0.9, 0.24, 0.24, 0.24, 0.24, 0.2, 0.24, 0.43, 0, 0.44, 0.37, 0.35, 0.32, 0.34, 0.9, 0.23, 0.6, 0.34, 0.9, 0.23, 0.6, 0.15, 0.19, 0.18, 0, 0.21, 0.2, 0.21, 0.2, 0.2, 0.24, 0.25, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.2, 0.24, 0.25, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.2, 0.24, 0.25, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.24, 0.2, 0.24, 0.43, 0, 0.44, 0.37, 0.35, 0.32, 0.34, 0.9, 0.23, 0.6, 0.34, 0.9, 0.23, 0.6]
+let list_D1 = [0.53]
 let L2 = 10
 let L1 = 15
 
@@ -282,9 +288,42 @@ async function bootstrap() {
     });
   });
 
+  const adafruit = app.get(AdafruitService)
+
   console.log('List clients: ', list_clients);
   let i = 1;
+  let j = 0
   setInterval(() => {
+
+    let dens = GlobalService.Densities
+    let t1_count = 0;
+    let t2_count = 0;
+
+    while (dens.length > 0 && j < dens.length) {
+      let temp = dens[j]
+      if (t1_count == 1 && temp.tl_id != "2") {
+        list_D2.push(list_D2[list_D2.length - 1])
+        break;
+      }
+      else if (t2_count == 1 && temp.tl_id != "1") {
+        list_D1.push(list_D1[list_D1.length - 1])
+        break;
+      }
+
+      if (temp.tl_id == "1") {
+        list_D1.push(temp.density)
+        t1_count++;
+        dens = dens.filter((item, index) => { index > 0 })
+      } else {
+        list_D2.push(temp.density)
+        t2_count++;
+        dens = dens.filter((item, index) => { index > 0 })
+      }
+      ++j;
+    }
+
+    console.log("D1: ", list_D1)
+    console.log("D2: ", list_D2)
 
     let data = {
       D1: list_D1[i],
@@ -351,11 +390,13 @@ async function bootstrap() {
       ]
     };
     if (i > list_D1.length - 1) {
-      i = 0
+      i = list_D1.length - 1
     }
     io.emit('traffic_lights', send_data); // Sends to all connected clients
     // console.log('Broadcasted traffic_lights to all clients:', data);
-  }, 1000);
+
+    // adafruit.publishData(new PublicDto({ state_feed: 'Test', time_feed: 'time', state: current_state_1 + '', time: current_time_1 + '' }))
+  }, 5000);
 
   await app.listen(process.env.PORT ?? 3000);
   console.log(`The application is ready at ${process.env.PORT}`)

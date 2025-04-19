@@ -18,12 +18,12 @@ export class TrafficLightController {
         return await this.TLService.add(dto);
     }
 
-    @ApiOperation({ summary: 'Remove a traffic light from the database, users cannot do this, just for developer.' })
-    @ApiParam({ name: 'id', required: true, description: 'Traffic light ID', type: String })
-    @Delete(':id')
-    async delete(@Param('id') id: string) {
-        return await this.TLService.delete(id);
-    }
+    // @ApiOperation({ summary: 'Remove a traffic light from the database, users cannot do this, just for developer.' })
+    // @ApiParam({ name: 'id', required: true, description: 'Traffic light ID', type: String })
+    // @Delete(':id')
+    // async delete(@Param('id') id: string) {
+    //     return await this.TLService.delete(id);
+    // }
 
     @ApiOperation({ summary: 'Get a specific traffic light or get all of them.' })
     @ApiParam({ name: 'id', required: false, description: 'Traffic light ID', type: String })

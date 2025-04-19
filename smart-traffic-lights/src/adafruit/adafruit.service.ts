@@ -4,24 +4,27 @@ import * as dotenv from 'dotenv';
 import { NewFeedDto, PublicDto } from './dto';
 import { ERRORS } from 'src/common/errors';
 import axios from 'axios';
-import * as qs from 'qs';
-import { group } from 'console';
+import * as FormData from 'form-data';
 
 dotenv.config();
 
 @Injectable()
 export class AdafruitService implements OnModuleInit {
-  private client: mqtt.MqttClient;
-  private ADAFRUIT_USERNAME = process.env.ADAFRUIT_USERNAME;
-  private ADAFRUIT_KEY = process.env.ADAFRUIT_KEY;
-  // private ADAFRUIT_FEED = `${this.ADAFRUIT_USERNAME}/feeds/test0`;
+  public client: mqtt.MqttClient;
+  public ADAFRUIT_USERNAME = process.env.ADAFRUIT_USERNAME;
+  public ADAFRUIT_KEY = process.env.ADAFRUIT_KEY;
+  // public ADAFRUIT_FEED = `${this.ADAFRUIT_USERNAME}/feeds/test0`;
+
+  // constructor() {
+  //   this.connect()
+  // }
 
   onModuleInit() {
     console.log(`ADAFRUIT connections:\n    User name: ${this.ADAFRUIT_USERNAME}\n    Key: ${this.ADAFRUIT_KEY}`)
     this.connect();
   }
 
-  private connect() {
+  public connect() {
     const MQTT_URL = `mqtts://${this.ADAFRUIT_USERNAME}:${this.ADAFRUIT_KEY}@io.adafruit.com`;
 
     this.client = mqtt.connect(MQTT_URL);
@@ -39,7 +42,7 @@ export class AdafruitService implements OnModuleInit {
     });
   }
 
-  // private subscribe() {
+  // public subscribe() {
   // this.client.subscribe(this.ADAFRUIT_FEED, (err) => {
   //   if (!err) {
   //     console.log(`Subscribed to ${this.ADAFRUIT_FEED}`);
@@ -148,14 +151,22 @@ export class AdafruitService implements OnModuleInit {
   }
 
   async createGroup(id: string) {
+    console.log(`ID: ${id}`)
+
     const url = `https://io.adafruit.com/api/v2/${this.ADAFRUIT_USERNAME}/groups`
-    const params = { name: id }
+
+    const params = JSON.stringify({name: id})
     const headers = {
+      'Content-Type': 'application/json',
       'X-AIO-Key': this.ADAFRUIT_KEY
     }
 
+    console.log(`URL: ${url}`)
+    console.log(`Parameters: ${params}`)
+    console.log(`Headers: ${headers}`)
+
     try {
-      const response = await axios.post(url, null, { headers, params })
+      const response = await axios.post(url, params, { headers })
 
       return response
     } catch (err) {

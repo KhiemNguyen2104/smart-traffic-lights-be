@@ -23,10 +23,8 @@ model User {
     hash_key  String
     role      String
 
-    changes        Changes[]
     has            Has[]
-    fines          Fines[]
-    turns_off_auto Turns_off_auto[]
+    // fines          Fines[]
 }
 
 model Permission {
@@ -40,27 +38,19 @@ model Traffic_light {
     tl_id   String @id
     length  Float
     width   Float
-    g_time  Int
-    r_time  Int
-    y_time  Int
     type    TLType
     cr_id   String
     g_thres Int
     r_thres Int
     y_thres Int
 
-    green_feed         String @unique
-    red_feed           String @unique
-    yellow_feed        String @unique
+    state_feed         String
+    time_feed           String
+    dens_feed        String
 
     crossroads Crossroads @relation(fields: [cr_id], references: [cr_id])
-    fines      Fines[]
-    updates    Updates[]
-}
-
-model System {
-    sys_id       String @id
-    im_send_time Int
+    // fines      Fines[]
+    // updates    Updates[]
 }
 
 model Crossroads {
@@ -68,20 +58,8 @@ model Crossroads {
     address    String
     phase_time Int
 
-    roads Road[]
-
     traffic_lights Traffic_light[]
-    updates        Updates[]
-    turns_off_auto Turns_off_auto[]
-}
-
-model Road {
-    cr_id String
-    type  TLType
-
-    crossroads Crossroads @relation(fields: [cr_id], references: [cr_id])
-
-    @@id([cr_id, type])
+    // updates        Updates[]
 }
 
 model Has {
@@ -95,64 +73,51 @@ model Has {
 }
 
 // /*
-// This table stores information about changing image sending time made by users to the system.
-// */
-model Changes {
-    user_id      String
-    time         DateTime @default(now())
-    im_send_time Int
-
-    user User @relation(fields: [user_id], references: [user_id])
-
-    @@id([user_id, time])
-}
-
-// /*
 //  This table stores records about changes applied by users to a traffic light -> changes a whole crossroads.
 //  */
-model Fines {
-    tl_id   String
-    user_id String
-    time    DateTime @default(now())
-    g_time  Int
-    r_time  Int
-    y_time  Int?
-    g_thres Int?
-    r_thres Int?
-    y_thres Int?
+// model Fines {
+//     tl_id   String
+//     user_id String
+//     time    DateTime @default(now())
+//     g_time  Int
+//     r_time  Int
+//     y_time  Int?
+//     g_thres Int?
+//     r_thres Int?
+//     y_thres Int?
 
-    traffic_light Traffic_light @relation(fields: [tl_id], references: [tl_id])
-    user          User          @relation(fields: [user_id], references: [user_id])
+//     traffic_light Traffic_light @relation(fields: [tl_id], references: [tl_id])
+//     user          User          @relation(fields: [user_id], references: [user_id])
 
-    @@id([tl_id, user_id, time])
-}
+//     @@id([tl_id, user_id, time])
+// }
 
 // /*
 //  This table stores records about changes applied by system's models to the crossroads.
 //  */
-model Updates {
-    cr_id  String
-    time   DateTime @default(now())
-    tl_id  String
-    g_time Int
-    r_time Int
+// model Updates {
+//     cr_id  String
+//     time   DateTime @default(now())
+//     tl_id  String
+//     g_time Int
+//     r_time Int
 
-    crossroads    Crossroads    @relation(fields: [cr_id], references: [cr_id])
-    traffic_light Traffic_light @relation(fields: [tl_id], references: [tl_id])
+//     crossroads    Crossroads    @relation(fields: [cr_id], references: [cr_id])
+//     traffic_light Traffic_light @relation(fields: [tl_id], references: [tl_id])
 
-    @@id([cr_id, time, tl_id])
-}
+//     @@id([cr_id, time, tl_id])
+// }
 
 // /*
 //  This table stores records about changes applied by users to turn on/off the automatic mode in a crossroads.
-//  */
-model Turns_off_auto {
-    user_id String
-    cr_id   String
-    time    DateTime @default(now())
+// //  */
+// model Turns_off_auto {
+//     user_id String
+//     cr_id   String
+//     time    DateTime @default(now())
 
-    user       User       @relation(fields: [user_id], references: [user_id])
-    crossroads Crossroads @relation(fields: [cr_id], references: [cr_id])
+//     user       User       @relation(fields: [user_id], references: [user_id])
+//     crossroads Crossroads @relation(fields: [cr_id], references: [cr_id])
 
-    @@id([user_id, cr_id, time])
-}
+//     @@id([user_id, cr_id, time])
+// }

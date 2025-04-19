@@ -26,21 +26,6 @@ export class AddTLDto {
     @IsNumber()
     @ApiProperty()
     @IsNotEmpty()
-    g_time: number
-
-    @IsNumber()
-    @ApiProperty()
-    @IsNotEmpty()
-    r_time: number
-
-    @IsNumber()
-    @ApiProperty()
-    @IsNotEmpty()
-    y_time: number
-
-    @IsNumber()
-    @ApiProperty()
-    @IsNotEmpty()
     g_thres: number
 
     @IsNumber()
@@ -89,21 +74,6 @@ export class UpdateTLDto {
     @ApiProperty()
     @IsString()
     cr_id?: string
-
-    @IsNumber()
-    @ApiProperty()
-    @IsNotEmpty()
-    g_time: number
-
-    @ApiProperty()
-    @IsNumber()
-    @IsNotEmpty()
-    r_time: number
-
-    @ApiProperty()
-    @IsNumber()
-    @IsOptional()
-    y_time?: number
 
     @ApiProperty()
     @IsNumber()

@@ -28,6 +28,10 @@ export class PublicDto {
     @IsNotEmpty()
     @ApiProperty()
     time_feed: string
+
+    constructor(partial?: Partial<PublicDto>) {
+        Object.assign(this, partial);
+    }
 }
 
 export class NewFeedDto {

@@ -3,15 +3,23 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { AddTLDto, UpdateTLDto } from './dto';
 import { ERRORS } from 'src/common/errors';
 import * as argon from 'argon2';
+import { AdafruitService } from 'src/adafruit/adafruit.service';
+import { NewFeedDto } from 'src/adafruit/dto';
 
 @Injectable()
 export class TrafficLightService {
-    constructor(private prisma: PrismaService) {}
+    constructor(private prisma: PrismaService, private adafruit: AdafruitService) {}
 
     async add(dto: AddTLDto) {
         if (!dto) {
             throw new ForbiddenException(ERRORS.MISSED_DATA)
         }
+
+        const count = await this.prisma.traffic_light.count({
+            where: {
+                cr_id: dto.cr_id
+            }
+        })
 
         const crossroads = await this.prisma.crossroads.findUnique({
             where: {
@@ -23,27 +31,24 @@ export class TrafficLightService {
             throw new ForbiddenException(ERRORS.CROSSROADS_NOT_FOUND)
         }
 
-        const id = (await argon.hash((new Date().toISOString())))
-        const g_feed = `g-time-${id}`;
-        const r_feed = `r-time-${id}`;
-        const y_feed = `y-time-${id}`;
+        const id = 'tl-' + (count + 1)
+        const state_feed = `state-${(count + 1) + ""}`;
+        const time_feed = `time-${(count + 1) + ""}`;
+        const dens_feed = `dens-${(count + 1) + ""}`;
 
         const newTL = await this.prisma.traffic_light.create({
             data: {
                 tl_id: id,
                 length: dto.length,
                 width: dto.width,
-                g_time: dto.g_time,
-                r_time: dto.r_time,
-                y_time: dto.y_time,
                 cr_id: dto.cr_id,
                 type: dto.type,
                 g_thres: dto.g_thres,
                 r_thres: dto.r_thres,
                 y_thres: dto.y_thres,
-                green_feed: g_feed,
-                red_feed: r_feed,
-                yellow_feed: y_feed,
+                time_feed: time_feed,
+                state_feed: state_feed,
+                dens_feed: dens_feed,
             }
         })
 
@@ -61,6 +66,12 @@ export class TrafficLightService {
                 }
             }
         })
+
+        
+
+        await this.adafruit.createNewFeed(new NewFeedDto({group: dto.cr_id, id: `time-${(count + 1) + ""}`}))
+        await this.adafruit.createNewFeed(new NewFeedDto({group: dto.cr_id, id: `state-${(count + 1) + ""}`}))
+        await this.adafruit.createNewFeed(new NewFeedDto({group: dto.cr_id, id: `dens-${(count + 1) + ""}`}))
 
         return newTL
     }
@@ -100,100 +111,15 @@ export class TrafficLightService {
                     tl_id: dto.tl_id
                 },
                 data: {
-                    g_time: dto.g_time,
-                    r_time: dto.r_time,
                     ...(dto.g_thres && {g_thres: dto.g_thres}),
                     ...(dto.r_thres && {r_thres: dto.r_thres}),
                     ...(dto.y_thres && {y_thres: dto.y_thres}),
-                    ...(dto.y_time && {y_time: dto.y_time}),
                 }
             })
 
-            if (dto.user_id) {
-                const t = new Date()
-                
-                await this.prisma.user.update({
-                    where: {
-                        user_id: dto.user_id
-                    },
-                    data: {
-                        fines: {
-                            create: {
-                                tl_id: dto.tl_id,
-                                time: t,
-                                g_time: dto.g_time,
-                                ...(dto.y_time && {y_time: dto.y_time}),
-                                ...(dto.y_thres && {y_thres: dto.y_thres}),
-                                ...(dto.g_thres && {g_thres: dto.g_thres}),
-                                ...(dto.r_thres && {r_thres: dto.r_thres}),
-                                r_time: dto.r_time,
-                            }
-                        }
-                    }
-                })
-
-                await this.prisma.traffic_light.update({
-                    where: {
-                        tl_id: dto.tl_id
-                    },
-                    data: {
-                        fines: {
-                            connect: {
-                                tl_id_user_id_time: {
-                                    tl_id: dto.tl_id,
-                                    user_id: dto.user_id,
-                                    time: t
-                                }
-                            }
-                        }
-                    }
-                })
-
-                return dto
-            } else if (!dto.cr_id) {
-                throw new ForbiddenException(ERRORS.UPDATE_ACTOR_NOT_FOUND)
-            } else {
-                const t = new Date()
-                
-                await this.prisma.crossroads.update({
-                    where: {
-                        cr_id: dto.cr_id
-                    },
-                    data: {
-                        updates: {
-                            create: {
-                                tl_id: dto.tl_id,
-                                time: t,
-                                g_time: dto.g_time,
-                                r_time: dto.r_time,
-                            }
-                        }
-                    }
-                })
-
-                await this.prisma.traffic_light.update({
-                    where: {
-                        tl_id: dto.tl_id
-                    },
-                    data: {
-                        updates: {
-                            connect: {
-                                cr_id_time_tl_id: {
-                                    cr_id: dto.cr_id,
-                                    time: t,
-                                    tl_id: dto.tl_id
-                                }
-                            }
-                        }
-                    }
-                })
-
-                return dto
-            }
+            return dto
         } catch (err) {
             throw new ForbiddenException(ERRORS.UPDATE_ERROR)
         }
     }
-
-    async delete(id: string) {}
 }

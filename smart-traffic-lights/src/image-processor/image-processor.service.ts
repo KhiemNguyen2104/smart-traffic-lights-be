@@ -9,8 +9,8 @@ export class ImageProcessorService {
     private ngrokDomain = process.env.NGROK_DOMAIN;
 
     async featureDetect(path: string) {
-        const imageBuffer = await readFile(path); // 🔁 read image from disk
-        const filename = p.basename(path);     // get filename like "car.jpg"
+        const imageBuffer = await readFile(path);
+        const filename = p.basename(path);
 
         const form = new FormData();
         form.append('image', imageBuffer, filename);
