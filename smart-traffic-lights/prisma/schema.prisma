@@ -23,7 +23,7 @@ model User {
     hash_key  String
     role      String
 
-    has            Has[]
+    has Has[]
     // fines          Fines[]
 }
 
@@ -35,7 +35,7 @@ model Permission {
 }
 
 model Traffic_light {
-    tl_id   String @id
+    tl_id   String
     length  Float
     width   Float
     type    TLType
@@ -44,19 +44,22 @@ model Traffic_light {
     r_thres Int
     y_thres Int
 
-    state_feed         String
-    time_feed           String
-    dens_feed        String
-
+    state_feed String
+    time_feed  String
+    dens_feed  String
     crossroads Crossroads @relation(fields: [cr_id], references: [cr_id])
     // fines      Fines[]
     // updates    Updates[]
+
+    @@id([tl_id, cr_id])
 }
 
 model Crossroads {
     cr_id      String @id
     address    String
     phase_time Int
+    L1         Int
+    L2         Int
 
     traffic_lights Traffic_light[]
     // updates        Updates[]

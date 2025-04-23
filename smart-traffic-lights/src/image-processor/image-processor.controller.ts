@@ -9,6 +9,7 @@ export class ImageProcessorController {
 
     @Post()
     featureDetect(path: string) {
-        return this.imageService.featureDetect('../smart-traffic-lights/src/model/images/image_339.jpg');
+        // return this.imageService.featureDetect('../smart-traffic-lights/src/model/images/image_339.jpg');
+        return
     }
 }

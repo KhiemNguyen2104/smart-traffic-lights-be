@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { TrafficLightService } from './traffic-light.service';
 import { AuthGuard } from '@nestjs/passport';
 import { AddTLDto, UpdateTLDto } from './dto/traffic-light.dto';
@@ -26,17 +26,18 @@ export class TrafficLightController {
     // }
 
     @ApiOperation({ summary: 'Get a specific traffic light or get all of them.' })
-    @ApiParam({ name: 'id', required: false, description: 'Traffic light ID', type: String })
+    @ApiQuery({ name: 'id', required: false, description: 'Traffic light ID', type: String })
+    @ApiQuery({ name: 'cr_id', required: true, description: 'Crossroads ID', type: String })
     @Get(':id')
-    async find(@Param('id') id: string | undefined) {
-        return await this.TLService.find(id);
+    async find(@Query('id') id: string | undefined, @Query('cr_id') cr_id: string) {
+        return await this.TLService.find(cr_id, id);
     }
 
-    @ApiOperation({ summary: 'Update allowed information of a specific traffic light.' })
-    @ApiParam({ name: 'id', required: false, description: 'Traffic light ID' })
-    @ApiBody({ type: UpdateTLDto })
-    @Put(':id')
-    async update(@Param('id') id: string, dto: UpdateTLDto) {
-        return await this.TLService.update(dto);
-    }
+    // @ApiOperation({ summary: 'Update allowed information of a specific traffic light.' })
+    // @ApiParam({ name: 'id', required: false, description: 'Traffic light ID' })
+    // @ApiBody({ type: UpdateTLDto })
+    // @Put(':id')
+    // async update(@Param('id') id: string, dto: UpdateTLDto) {
+    //     return await this.TLService.update(dto);
+    // }
 }

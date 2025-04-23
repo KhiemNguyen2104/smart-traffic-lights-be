@@ -8,9 +8,10 @@ import * as p from 'path'
 export class ImageProcessorService {
     private ngrokDomain = process.env.NGROK_DOMAIN;
 
-    async featureDetect(path: string) {
-        const imageBuffer = await readFile(path);
-        const filename = p.basename(path);
+    async featureDetect(buffer: string, filename: string) {
+
+        const base64Data = buffer.replace(/^data:image\/\w+;base64,/, '');
+        const imageBuffer = Buffer.from(base64Data, 'base64');
 
         const form = new FormData();
         form.append('image', imageBuffer, filename);

@@ -29,6 +29,17 @@ export class PublicDto {
     @ApiProperty()
     time_feed: string
 
+    @Transform(({ value }) => value.toString())
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty()
+    density: string
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty()
+    dens_feed: string
+
     constructor(partial?: Partial<PublicDto>) {
         Object.assign(this, partial);
     }

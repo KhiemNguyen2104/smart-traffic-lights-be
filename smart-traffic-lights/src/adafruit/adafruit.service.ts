@@ -52,7 +52,7 @@ export class AdafruitService implements OnModuleInit {
   // });
   // }
 
-  public publishData(data: PublicDto) {
+  public async publishData(data: PublicDto) {
     if (!data.state_feed || !data.time_feed) {
       throw new ForbiddenException(ERRORS.FEED_KEY_NOT_FOUND)
     }
@@ -61,6 +61,7 @@ export class AdafruitService implements OnModuleInit {
 
     const state_feed = `${this.ADAFRUIT_USERNAME}/feeds/${group}${data.state_feed}`
     const time_feed = `${this.ADAFRUIT_USERNAME}/feeds/${group}${data.time_feed}`
+    const dens_feed = `${this.ADAFRUIT_USERNAME}/feeds/${group}${data.dens_feed}`
 
     this.client.publish(time_feed, data.time, { qos: 1 }, (err) => {
       if (!err) {
@@ -73,6 +74,14 @@ export class AdafruitService implements OnModuleInit {
     this.client.publish(state_feed, data.state, { qos: 1 }, (err) => {
       if (!err) {
         console.log(`Published: ${data.state} to ${data.state_feed}`);
+      } else {
+        throw new ForbiddenException(ERRORS.PUBLIC_ERROR + ":", err)
+      }
+    })
+
+    this.client.publish(dens_feed, data.density, { qos: 1 }, (err) => {
+      if (!err) {
+        console.log(`Published: ${data.density} to ${data.dens_feed}`);
       } else {
         throw new ForbiddenException(ERRORS.PUBLIC_ERROR + ":", err)
       }

@@ -61,7 +61,10 @@ export class TrafficLightService {
             data: {
                 traffic_lights: {
                     connect: {
-                        tl_id: id
+                        tl_id_cr_id: {
+                            tl_id: id,
+                            cr_id: dto.cr_id
+                        }
                     }
                 }
             }
@@ -76,7 +79,7 @@ export class TrafficLightService {
         return newTL
     }
 
-    async find(id?: string) {
+    async find(cr_id: string, id?: string) {
         if (!id) {
             const traffic_light = await this.prisma.traffic_light.findMany({})
 
@@ -88,7 +91,10 @@ export class TrafficLightService {
         } else {
             const traffic_light = await this.prisma.traffic_light.findUnique({
                 where: {
-                    tl_id: id
+                    tl_id_cr_id: {
+                        tl_id: id,
+                        cr_id: cr_id
+                    }
                 }
             })
 
@@ -100,26 +106,26 @@ export class TrafficLightService {
         }
     }
 
-    async update(dto: UpdateTLDto) {
-        if (!dto.tl_id) {
-            throw new ForbiddenException(ERRORS.USER_NOT_FOUND)
-        }
+    // async update(dto: UpdateTLDto) {
+    //     if (!dto.tl_id) {
+    //         throw new ForbiddenException(ERRORS.USER_NOT_FOUND)
+    //     }
 
-        try {
-            await this.prisma.traffic_light.update({
-                where: {
-                    tl_id: dto.tl_id
-                },
-                data: {
-                    ...(dto.g_thres && {g_thres: dto.g_thres}),
-                    ...(dto.r_thres && {r_thres: dto.r_thres}),
-                    ...(dto.y_thres && {y_thres: dto.y_thres}),
-                }
-            })
+    //     try {
+    //         await this.prisma.traffic_light.update({
+    //             where: {
+    //                 tl_id: dto.tl_id
+    //             },
+    //             data: {
+    //                 ...(dto.g_thres && {g_thres: dto.g_thres}),
+    //                 ...(dto.r_thres && {r_thres: dto.r_thres}),
+    //                 ...(dto.y_thres && {y_thres: dto.y_thres}),
+    //             }
+    //         })
 
-            return dto
-        } catch (err) {
-            throw new ForbiddenException(ERRORS.UPDATE_ERROR)
-        }
-    }
+    //         return dto
+    //     } catch (err) {
+    //         throw new ForbiddenException(ERRORS.UPDATE_ERROR)
+    //     }
+    // }
 }

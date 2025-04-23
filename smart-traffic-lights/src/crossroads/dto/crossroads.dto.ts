@@ -16,4 +16,14 @@ export class NewCRDto {
     @IsNotEmpty()
     @ApiProperty({ description: "Total time of a traffic lights", type: Number })
     phase_time: number
+
+    @IsNumber()
+    @IsNotEmpty()
+    @ApiProperty({description: "The length of road A", type: Number})
+    L1: number
+
+    @IsNumber()
+    @IsNotEmpty()
+    @ApiProperty({description: "The length of road B", type: Number})
+    L2: number
 }
