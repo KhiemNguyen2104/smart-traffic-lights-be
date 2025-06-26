@@ -81,3 +81,19 @@ To run the application, use this command
 ```bash
 npm run start:dev
 ```
+
+To test the application with camera simulators, you can
+
+1. Create another terminal
+
+2. Move to the folder containing the simulator file.
+
+```bash
+cd .\image_sending_machine\
+```
+
+3. Run the simulator with Python when the application is running.
+
+```bash
+python send_images.py
+```
